@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { parseCookies, setCookie } from "nookies";
+import { signOut } from "../contexts/AuthContext";
 
 let cookies = parseCookies();
 let isRefreshing = false;
@@ -7,10 +8,11 @@ let failedRequestsQueue = [];
 
 export const api = axios.create({
   baseURL: "http://localhost:4444",
-  headers: {
-    Authorization: `Bearer ${cookies["nextauth.token"]}`,
-  },
 });
+
+api.defaults.headers.common[
+  "Authorization"
+] = `Bearer ${cookies["nextauth.token"]}`;
 
 api.interceptors.response.use(
   (response) => {
@@ -69,9 +71,7 @@ api.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedRequestsQueue.push({
             onSuccess: (token: string) => {
-              originalConfig.headers.common[
-                "Authorization"
-              ] = `Bearer ${token}`;
+              originalConfig.headers["Authorization"] = `Bearer ${token}`;
 
               resolve(api(originalConfig));
             },
@@ -82,7 +82,10 @@ api.interceptors.response.use(
         });
       } else {
         // deslogar usuário
+        signOut();
       }
     }
+
+    return Promise.reject(error);
   }
 );
