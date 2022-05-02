@@ -1,4 +1,7 @@
+import { GetServerSideProps } from "next";
 import { FormEvent, useContext, useState } from "react";
+import { parseCookies } from "nookies";
+
 import { AuthContext } from "../contexts/AuthContext";
 import styles from "../styles/Home.module.scss";
 
@@ -35,3 +38,24 @@ export default function Home() {
     </form>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  // mostra todos os cookies armazenados na página
+  console.log(ctx.req.cookies);
+
+  const cookies = parseCookies(ctx);
+
+  // se token existir, redireciona para dashboard
+  if (cookies["nextauth.token"]) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
