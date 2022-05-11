@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
+import { validateUserPermissions } from "../utils/validateUserPermissions";
 
 type UseCamParams = {
   permissions?: string[];
@@ -13,28 +14,12 @@ export function useCan({ permissions, roles }: UseCamParams) {
     return false;
   }
 
-  if (permissions?.length > 0) {
-    // checar se tem todas as permissões
-    const hasAllPermissions = permissions.every((permission) => {
-      return user.permissions.includes(permission);
-    });
-
-    if (!hasAllPermissions) {
-      return false;
-    }
-  }
-
-  if (roles?.length > 0) {
-    // checar se tem todas as roles
-    const hasAllRoles = roles.some((role) => {
-      return user.roles.includes(role);
-    });
-
-    if (!hasAllRoles) {
-      return false;
-    }
-  }
+  const userHasValidPermissions = validateUserPermissions({
+    user,
+    permissions,
+    roles,
+  });
 
   // retorna true se todas passar todas as condições
-  return true;
+  return userHasValidPermissions;
 }
