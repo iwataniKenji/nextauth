@@ -1,3 +1,4 @@
+import { Button, Flex, Stack, Text } from "@chakra-ui/react";
 import { useContext, useEffect } from "react";
 import { Can } from "../components/Can";
 import { AuthContext } from "../contexts/AuthContext";
@@ -16,15 +17,26 @@ export default function Dashboard() {
   });
 
   return (
-    <>
-      <h1>Dashboard: {user?.email}</h1>
+    <Flex flexDir="column" w="100vw" h="100vh" align="center" justify="center">
+      <Stack spacing="4" align="center">
+        <Text fontSize="lg">Dashboard: {user?.email}</Text>
 
-      <button onClick={signOut}>Sign out</button>
+        <Button
+          type="submit"
+          mt="6"
+          colorScheme="pink"
+          width="80%"
+          size="md"
+          onClick={signOut}
+        >
+          Sign out
+        </Button>
 
-      <Can permissions={["metrics.list"]}>
-        <div>Metrics</div>
-      </Can>
-    </>
+        <Can permissions={["metrics.list"]}>
+          <Text fontSize="lg">Permission conceived</Text>
+        </Can>
+      </Stack>
+    </Flex>
   );
 }
 
